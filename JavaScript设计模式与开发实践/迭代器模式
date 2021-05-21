@@ -1,0 +1,54 @@
+### 定义
+迭代器模式就是循环访问聚合对象的各个元素。
+
+### 内部迭代器和外部迭代器
+- 内部迭代器
+内部迭代器已经定义好了迭代规则，它完全接受整个迭代过程，外部只需要一次初始调用
+```js
+const each = (arr, callback) => {
+  for (let i = 0; i < arr.length; i++) {
+    callback.call(arr[i], i, arr[i])
+  }
+}
+
+each([1, 2, 3], (i, n) => { console.log(i, n) }
+```
+- 外部迭代器
+外部迭代器增加了一些调用的复杂度，但相对也增强了迭代器的灵活性，我们可以手工控制迭代的过程或顺序
+```js
+const Iterator = (obj) => {
+  let current = 0
+  
+  const next = () => current++
+  const isDone = () => current >= obj.length
+  const getCurrentItem = () => obj[current]
+  
+  return {
+    next,
+    isDone,
+    getCurrentItem,
+    length: obj.length
+  }
+}
+```
+
+#### 中止迭代器
+约定回调返回`false`则提前终止循环
+```js
+const each = (arr, callback) => {
+  for (let i = 0; i < arr.length; i++) {
+    if (callback.call(arr[i], i, arr[i]) === false) break // callback执行结果返回false，提前中止
+  }
+}
+
+each([1, 2, 3, 4, 5], (i, n) => {
+  if (n > 3) return false
+  console.log(n)
+})
+```
+
+### 小结
+迭代器模式比较简单，而且大部分语言都内置了迭代器。所以我们很多时候都会忽略它
+
+### 参考资料
+JavaScript设计模式与开发实践-第7章
